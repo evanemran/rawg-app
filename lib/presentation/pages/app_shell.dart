@@ -21,7 +21,7 @@ class AppShell extends ConsumerWidget {
       style: DrawerStyle.defaultStyle,
       borderRadius: 24,
       showShadow: true,
-      angle: 15,
+      angle: 0,
       menuBackgroundColor: AppColors.surface,
       shadowLayer1Color: AppColors.drawerShadowOne,
       shadowLayer2Color: AppColors.drawerShadowTwo,
