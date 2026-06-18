@@ -20,15 +20,15 @@ class LandingPage extends ConsumerWidget {
   ];
 
   static List<_NavItem> _items = [
-    _NavItem(icon: AppImages.homeActive, activeIcon: AppImages.homeInactive, label: 'Home'),
-    _NavItem(icon: AppImages.exploreActive, activeIcon: AppImages.exploreInactive, label: 'Explore'),
+    _NavItem(icon: AppImages.homeInactive, activeIcon: AppImages.homeActive, label: 'Home'),
+    _NavItem(icon: AppImages.exploreInactive, activeIcon: AppImages.exploreActive, label: 'Explore'),
     _NavItem(
-        icon: AppImages.collectionActive,
-        activeIcon: AppImages.collectionInactive,
+        icon: AppImages.collectionInactive,
+        activeIcon: AppImages.collectionActive,
         label: 'Collection'),
     _NavItem(
-        icon: AppImages.profileActive,
-        activeIcon: AppImages.profileInactive,
+        icon: AppImages.profileInactive,
+        activeIcon: AppImages.profileActive,
         label: 'Profile'),
   ];
 
