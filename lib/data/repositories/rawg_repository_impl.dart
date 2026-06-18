@@ -57,6 +57,12 @@ class RawgRepositoryImpl implements RawgRepository {
   }
 
   @override
+  Future<List<Games>> searchGames(String query, int page) async {
+    final raw = await api.searchGames(query, page);
+    return PaginatedResponse.fromJson(raw, Games.fromJson).results;
+  }
+
+  @override
   Future<List<Games>> getGameAdditions(String gamePk, int page) async {
     final raw = await api.fetchGameAdditions(gamePk, page);
     return PaginatedResponse.fromJson(raw, Games.fromJson).results;

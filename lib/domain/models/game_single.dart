@@ -1,5 +1,7 @@
 // Model for `/games/{id}` (game details) and `/games/{id}/suggested`.
 
+import 'package:rawg_app/domain/models/developers.dart';
+
 class GamePlatformMetacritic {
   int? metascore;
   String? url;
@@ -80,6 +82,7 @@ class GameSingle {
   int? additionsCount;
   int? gameSeriesCount;
   EsrbRating? esrbRating;
+  List<Developer>? developers;
 
   GameSingle({
     this.id,
@@ -120,6 +123,7 @@ class GameSingle {
     this.additionsCount,
     this.gameSeriesCount,
     this.esrbRating,
+    this.developers,
   });
 
   GameSingle.fromJson(Map<String, dynamic> json) {
@@ -170,6 +174,12 @@ class GameSingle {
     esrbRating = json['esrb_rating'] != null
         ? EsrbRating.fromJson(json['esrb_rating'])
         : null;
+    if (json['developers'] != null) {
+      developers = <Developer>[];
+      json['developers'].forEach((v) {
+        developers!.add(Developer.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -216,6 +226,9 @@ class GameSingle {
     data['game_series_count'] = gameSeriesCount;
     if (esrbRating != null) {
       data['esrb_rating'] = esrbRating!.toJson();
+    }
+    if (developers != null) {
+      data['developers'] = developers!.map((v) => v.toJson()).toList();
     }
     return data;
   }

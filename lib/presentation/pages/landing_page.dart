@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../app/theme/app_colors.dart';
+import '../../app/theme/app_images.dart';
 import '../providers/navigation_provider.dart';
 import 'collection_page.dart';
 import 'explore_page.dart';
@@ -17,6 +19,19 @@ class LandingPage extends ConsumerWidget {
     ProfilePage(),
   ];
 
+  static List<_NavItem> _items = [
+    _NavItem(icon: AppImages.homeActive, activeIcon: AppImages.homeInactive, label: 'Home'),
+    _NavItem(icon: AppImages.exploreActive, activeIcon: AppImages.exploreInactive, label: 'Explore'),
+    _NavItem(
+        icon: AppImages.collectionActive,
+        activeIcon: AppImages.collectionInactive,
+        label: 'Collection'),
+    _NavItem(
+        icon: AppImages.profileActive,
+        activeIcon: AppImages.profileInactive,
+        label: 'Profile'),
+  ];
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentIndex = ref.watch(navigationIndexProvider);
@@ -26,32 +41,82 @@ class LandingPage extends ConsumerWidget {
         index: currentIndex,
         children: _pages,
       ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: currentIndex,
-        onDestinationSelected: (index) =>
+      bottomNavigationBar: _BottomNav(
+        items: _items,
+        currentIndex: currentIndex,
+        onTap: (index) =>
             ref.read(navigationIndexProvider.notifier).state = index,
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home),
-            label: 'Home',
+      ),
+    );
+  }
+}
+
+class _NavItem {
+  final String icon;
+  final String activeIcon;
+  final String label;
+
+  const _NavItem({
+    required this.icon,
+    required this.activeIcon,
+    required this.label,
+  });
+}
+
+class _BottomNav extends StatelessWidget {
+  final List<_NavItem> items;
+  final int currentIndex;
+  final ValueChanged<int> onTap;
+
+  const _BottomNav({
+    required this.items,
+    required this.currentIndex,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: kToolbarHeight,
+      decoration: const BoxDecoration(
+        color: AppColors.background,
+        border: Border(top: BorderSide(color: AppColors.divider)),
+      ),
+      child: SafeArea(
+        top: false,
+        child: SizedBox(
+          height: 60,
+          child: Row(
+            children: List.generate(items.length, (index) {
+              final item = items[index];
+              final active = index == currentIndex;
+              final color =
+                  active ? AppColors.accent : AppColors.textSecondary;
+              return Expanded(
+                child: InkWell(
+                  onTap: () => onTap(index),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(active ? item.activeIcon : item.icon,
+                          color: color, height: 24),
+                      const SizedBox(height: 4),
+                      Text(
+                        item.label,
+                        style: TextStyle(
+                          color: color,
+                          fontSize: 11,
+                          fontWeight:
+                              active ? FontWeight.w600 : FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }),
           ),
-          NavigationDestination(
-            icon: Icon(Icons.explore_outlined),
-            selectedIcon: Icon(Icons.explore),
-            label: 'Explore',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.collections_bookmark_outlined),
-            selectedIcon: Icon(Icons.collections_bookmark),
-            label: 'Collection',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.person_outline),
-            selectedIcon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
+        ),
       ),
     );
   }

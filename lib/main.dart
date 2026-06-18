@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:rawg_app/app/theme/app_theme.dart';
 import 'package:rawg_app/presentation/pages/landing_page.dart';
 
 void main() {
@@ -13,12 +14,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Rawg',
+      title: 'RAWG',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
-        useMaterial3: true,
-      ),
+      theme: AppTheme.dark,
       home: const LandingPage(),
     );
   }

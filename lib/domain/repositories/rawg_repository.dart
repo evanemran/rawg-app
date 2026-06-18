@@ -21,6 +21,7 @@ abstract class RawgRepository {
 
   // Games
   Future<List<Games>> getGames(int page);
+  Future<List<Games>> searchGames(String query, int page);
   Future<List<Games>> getGameAdditions(String gamePk, int page);
   Future<List<GamePersonList>> getGameDevelopmentTeam(String gamePk, int page);
   Future<List<Games>> getGameSeries(String gamePk, int page);
