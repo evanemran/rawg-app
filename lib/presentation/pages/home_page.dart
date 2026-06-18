@@ -25,7 +25,7 @@ class _HomePageState extends ConsumerState<HomePage> {
         centerTitle: true,
         backgroundColor: Colors.red,
       ),
-      body: GamesList(0),
+      body: GamesList(1),
     );
   }
 }

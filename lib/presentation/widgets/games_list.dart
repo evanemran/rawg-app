@@ -13,7 +13,7 @@ class GamesList extends ConsumerWidget{
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final gamesAsync = ref.watch(gamesProvider(0));
+    final gamesAsync = ref.watch(gamesProvider(1));
 
     return gamesAsync.when(
         data: (games) {
