@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:rawg_app/app/theme/app_images.dart';
 
 import '../../app/theme/app_colors.dart';
 import '../../domain/models/games.dart';
@@ -8,6 +9,7 @@ import '../providers/games_provider.dart';
 import '../providers/genre_providers.dart';
 import '../providers/navigation_provider.dart';
 import '../widgets/app_widgets.dart';
+import '../widgets/drawer_menu_button.dart';
 import '../widgets/game_cards.dart';
 import 'game_details_navigation.dart';
 
@@ -202,13 +204,17 @@ class _HomeHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+      padding: const EdgeInsets.fromLTRB(4, 12, 16, 4),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const Padding(
+            padding: EdgeInsets.only(top: 2),
+            child: DrawerMenuButton(),
+          ),
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 RichText(
                   text: const TextSpan(
@@ -245,8 +251,8 @@ class _HomeHeader extends StatelessWidget {
           ),
           IconButton(
             onPressed: () {},
-            icon: const Icon(Icons.notifications_none_rounded,
-                color: AppColors.textPrimary),
+            icon: Image.asset(AppImages.notificationIcon,
+                color: AppColors.textPrimary, height: 24,),
           ),
         ],
       ),

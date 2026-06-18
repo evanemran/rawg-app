@@ -53,6 +53,7 @@ class _GameDetailsPageState extends ConsumerState<GameDetailsPage> {
               _buildRatingsBreakdown(),
               _buildPlatforms(),
               const SizedBox(height: 24),
+              _buildPcRequirements(),
               _buildStores(),
               _buildScreenshots(),
               const SizedBox(height: 24),
@@ -89,7 +90,7 @@ class _GameDetailsPageState extends ConsumerState<GameDetailsPage> {
         background: Stack(
           fit: StackFit.expand,
           children: [
-            GameImage(url: game.backgroundImage),
+            GameImage(url: game.backgroundImageAdditional ?? game.backgroundImage),
             const DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -479,6 +480,88 @@ class _GameDetailsPageState extends ConsumerState<GameDetailsPage> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildPcRequirements() {
+    final platforms = game.platforms;
+    if (platforms == null) return const SizedBox.shrink();
+
+    RequirementsEn? req;
+    for (final p in platforms) {
+      if (p.platform?.slug == 'pc' && p.requirementsEn != null) {
+        req = p.requirementsEn;
+        break;
+      }
+    }
+    if (req == null) return const SizedBox.shrink();
+
+    final minimum = _cleanRequirement(req.minimum, 'Minimum');
+    final recommended = _cleanRequirement(req.recommended, 'Recommended');
+    if (minimum == null && recommended == null) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SectionHeader(title: 'System Requirements (PC)'),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+          child: Column(
+            children: [
+              if (minimum != null)
+                _requirementBlock('Minimum', minimum),
+              if (minimum != null && recommended != null)
+                const SizedBox(height: 12),
+              if (recommended != null)
+                _requirementBlock('Recommended', recommended),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Strips HTML and the leading "Minimum:"/"Recommended:" label from a
+  /// requirements string. Returns null when there's nothing meaningful.
+  String? _cleanRequirement(String? raw, String label) {
+    if (raw == null || raw.trim().isEmpty) return null;
+    var text = _stripHtml(raw)
+        .replaceFirst(RegExp('^$label:\\s*', caseSensitive: false), '')
+        .trim();
+    return text.isEmpty ? null : text;
+  }
+
+  Widget _requirementBlock(String title, String body) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.divider),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              color: AppColors.accentSoft,
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            body,
+            style: const TextStyle(
+              color: AppColors.textSecondary,
+              fontSize: 13,
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
     );
   }
 

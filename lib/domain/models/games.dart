@@ -5,6 +5,7 @@ class Games {
   String? released;
   bool? tba;
   String? backgroundImage;
+  String? backgroundImageAdditional;
   double? rating;
   int? ratingTop;
   List<Ratings>? ratings;
@@ -36,6 +37,7 @@ class Games {
         this.released,
         this.tba,
         this.backgroundImage,
+        this.backgroundImageAdditional,
         this.rating,
         this.ratingTop,
         this.ratings,
@@ -67,6 +69,7 @@ class Games {
     released = json['released'];
     tba = json['tba'];
     backgroundImage = json['background_image'];
+    backgroundImageAdditional = json['background_image_additional'];
     rating = json['rating'];
     ratingTop = json['rating_top'];
     if (json['ratings'] != null) {
@@ -139,6 +142,7 @@ class Games {
     data['released'] = this.released;
     data['tba'] = this.tba;
     data['background_image'] = this.backgroundImage;
+    data['background_image_additional'] = this.backgroundImageAdditional;
     data['rating'] = this.rating;
     data['rating_top'] = this.ratingTop;
     if (this.ratings != null) {

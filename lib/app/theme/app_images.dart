@@ -9,4 +9,6 @@ class AppImages {
   static const collectionInactive = "$imagePath/collection_inactive.png";
   static const profileActive = "$imagePath/profile_active.png";
   static const profileInactive = "$imagePath/profile_inactive.png";
+  static const drawerIcon = "$imagePath/drawer_menu.png";
+  static const notificationIcon = "$imagePath/notification_icon.png";
 }

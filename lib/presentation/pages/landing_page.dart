@@ -19,7 +19,7 @@ class LandingPage extends ConsumerWidget {
     ProfilePage(),
   ];
 
-  static List<_NavItem> _items = [
+  static final List<_NavItem> _items = [
     _NavItem(icon: AppImages.homeInactive, activeIcon: AppImages.homeActive, label: 'Home'),
     _NavItem(icon: AppImages.exploreInactive, activeIcon: AppImages.exploreActive, label: 'Explore'),
     _NavItem(
@@ -77,7 +77,7 @@ class _BottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: kToolbarHeight,
+      // height: kToolbarHeight,
       decoration: const BoxDecoration(
         color: AppColors.background,
         border: Border(top: BorderSide(color: AppColors.divider)),

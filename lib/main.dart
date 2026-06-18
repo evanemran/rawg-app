@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rawg_app/app/theme/app_theme.dart';
-import 'package:rawg_app/presentation/pages/landing_page.dart';
+import 'package:rawg_app/presentation/pages/app_shell.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       title: 'RAWG',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.dark,
-      home: const LandingPage(),
+      home: const AppShell(),
     );
   }
 }

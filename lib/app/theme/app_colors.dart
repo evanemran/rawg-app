@@ -18,4 +18,7 @@ class AppColors {
 
   static const Color divider = Color(0xFF24242E);
   static const Color star = Color(0xFF8B5CF6);
+
+  static const Color drawerShadowOne = Color(0xFF26262D);
+  static const Color drawerShadowTwo = Color(0xFF40404A);
 }
