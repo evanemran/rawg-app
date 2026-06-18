@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "793566773716",
+    "project_id": "rawg-fb",
+    "storage_bucket": "rawg-fb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:793566773716:android:b3d879a8f5b792a430d641",
+        "android_client_info": {
+          "package_name": "com.evanemran.rawg_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "793566773716-hipi23jphhtgm616l0oaqiluc7trfvjo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.evanemran.rawg_app",
+            "certificate_hash": "f918fe3d10fede5c1052331df5cb3de90f34758b"
+          }
+        },
+        {
+          "client_id": "793566773716-s4hu3a7q8v852l50sn7g92nd108rphnm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDUXDNDPWx_59JJFxbcAKu36YBVNduqwzI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "793566773716-s4hu3a7q8v852l50sn7g92nd108rphnm.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "793566773716-or8tdcfidldm07k8p2rhmen8cn667ta1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.evanemran.rawgApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

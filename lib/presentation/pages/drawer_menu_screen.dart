@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 
 import '../../app/theme/app_colors.dart';
+import '../providers/auth_provider.dart';
 
 class _DrawerItem {
   final IconData icon;
@@ -32,14 +34,14 @@ const _discoverItems = <_DrawerItem>[
   _DrawerItem(Icons.videogame_asset_rounded, 'Platforms'),
 ];
 
-class DrawerMenuScreen extends StatefulWidget {
+class DrawerMenuScreen extends ConsumerStatefulWidget {
   const DrawerMenuScreen({super.key});
 
   @override
-  State<DrawerMenuScreen> createState() => _DrawerMenuScreenState();
+  ConsumerState<DrawerMenuScreen> createState() => _DrawerMenuScreenState();
 }
 
-class _DrawerMenuScreenState extends State<DrawerMenuScreen> {
+class _DrawerMenuScreenState extends ConsumerState<DrawerMenuScreen> {
   String _selected = 'Home';
 
   void _onSelect(String label) {
@@ -91,6 +93,16 @@ class _DrawerMenuScreenState extends State<DrawerMenuScreen> {
   }
 
   Widget _buildProfileHeader() {
+    final profileAsync = ref.watch(userProfileProvider);
+    final displayName = profileAsync.maybeWhen(
+      data: (user) => user?.name,
+      orElse: () => null,
+    );
+    final profilePicture = profileAsync.maybeWhen(
+      data: (user) => user?.profilePicture,
+      orElse: () => null,
+    );
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 40, 16, 40),
       child: Column(
@@ -98,20 +110,28 @@ class _DrawerMenuScreenState extends State<DrawerMenuScreen> {
         children: [
           Row(
             children: [
-              const CircleAvatar(
+              CircleAvatar(
                 radius: 28,
                 backgroundColor: AppColors.surfaceVariant,
-                child: Icon(Icons.person_rounded,
-                    color: AppColors.textSecondary, size: 30),
+                backgroundImage: profilePicture != null
+                    ? NetworkImage(profilePicture)
+                    : null,
+                child: profilePicture == null
+                    ? const Icon(
+                        Icons.person_rounded,
+                        color: AppColors.textSecondary,
+                        size: 30,
+                      )
+                    : null,
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'evanemran',
-                      style: TextStyle(
+                    Text(
+                      displayName ?? 'Player',
+                      style: const TextStyle(
                         color: AppColors.textPrimary,
                         fontSize: 17,
                         fontWeight: FontWeight.w700,

@@ -87,7 +87,7 @@ class _HomeContent extends ConsumerWidget {
         const SizedBox(height: 20),
         SectionHeader(title: 'Popular Now', onViewAll: () {}),
         SizedBox(
-          height: 220,
+          height: MediaQuery.of(context).size.width * 0.50,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -97,6 +97,7 @@ class _HomeContent extends ConsumerWidget {
               final game = popular[index];
               return PosterGameCard(
                 game: game,
+                width: MediaQuery.of(context).size.width * 0.25,
                 onTap: () => openGameDetails(context, game),
               );
             },
