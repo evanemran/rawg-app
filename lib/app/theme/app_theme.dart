@@ -5,6 +5,8 @@ import 'app_colors.dart';
 class AppTheme {
   AppTheme._();
 
+  static const String fontFamily = 'Oxanium';
+
   static ThemeData get dark {
     final base = ThemeData.dark(useMaterial3: true);
 
@@ -30,14 +32,19 @@ class AppTheme {
         centerTitle: false,
         iconTheme: IconThemeData(color: AppColors.textPrimary),
         titleTextStyle: TextStyle(
+          fontFamily: fontFamily,
           color: AppColors.textPrimary,
           fontSize: 20,
           fontWeight: FontWeight.w700,
         ),
       ),
       textTheme: base.textTheme.apply(
+        fontFamily: fontFamily,
         bodyColor: AppColors.textPrimary,
         displayColor: AppColors.textPrimary,
+      ),
+      primaryTextTheme: base.primaryTextTheme.apply(
+        fontFamily: fontFamily,
       ),
       iconTheme: const IconThemeData(color: AppColors.textPrimary),
     );

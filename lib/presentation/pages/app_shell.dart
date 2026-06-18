@@ -27,7 +27,7 @@ class AppShell extends ConsumerWidget {
       shadowLayer2Color: AppColors.drawerShadowTwo,
       drawerShadowsBackgroundColor: AppColors.surfaceVariant,
       mainScreenScale: 0.2,
-      slideWidth: MediaQuery.of(context).size.width * 0.7,
+      slideWidth: MediaQuery.of(context).size.width * 0.8,
       openCurve: Curves.easeOutCubic,
       closeCurve: Curves.easeOutCubic,
       menuScreenTapClose: true,

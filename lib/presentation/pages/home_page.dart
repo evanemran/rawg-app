@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rawg_app/app/theme/app_images.dart';
+import 'package:rawg_app/app/theme/app_theme.dart';
 
 import '../../app/theme/app_colors.dart';
 import '../../domain/models/games.dart';
@@ -217,14 +218,15 @@ class _HomeHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 RichText(
-                  text: const TextSpan(
+                  text: TextSpan(
                     children: [
                       TextSpan(
-                        text: 'RAW ',
+                        text: 'RAW',
                         style: TextStyle(
                           color: AppColors.textPrimary,
                           fontSize: 26,
                           fontWeight: FontWeight.w800,
+                          fontFamily: AppTheme.fontFamily
                         ),
                       ),
                       TextSpan(
@@ -233,6 +235,7 @@ class _HomeHeader extends StatelessWidget {
                           color: AppColors.accent,
                           fontSize: 26,
                           fontWeight: FontWeight.w800,
+                          fontFamily: AppTheme.fontFamily
                         ),
                       ),
                     ],

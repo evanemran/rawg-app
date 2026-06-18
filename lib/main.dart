@@ -17,6 +17,12 @@ class MyApp extends StatelessWidget {
       title: 'RAWG',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.dark,
+      builder: (context, child) {
+        return DefaultTextStyle.merge(
+          style: const TextStyle(fontFamily: AppTheme.fontFamily),
+          child: child!,
+        );
+      },
       home: const AppShell(),
     );
   }

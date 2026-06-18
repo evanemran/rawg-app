@@ -11,7 +11,7 @@ class _DrawerItem {
 }
 
 const _mainItems = <_DrawerItem>[
-  _DrawerItem(Icons.home_rounded, 'Home'),
+  _DrawerItem(Icons.home_filled, 'Home'),
   _DrawerItem(Icons.search_rounded, 'Explore'),
   _DrawerItem(Icons.folder_open_rounded, 'Collection'),
   _DrawerItem(Icons.format_list_bulleted_rounded, 'Lists'),
@@ -133,7 +133,7 @@ class _DrawerMenuScreenState extends State<DrawerMenuScreen> {
                             color: AppColors.textSecondary, size: 14),
                         SizedBox(width: 4),
                         Expanded(child: Text(
-                          '3,450/5,000 XP',
+                          '3,450 / 5,000 XP',
                           style: TextStyle(
                             color: AppColors.textSecondary,
                             fontSize: 12,
