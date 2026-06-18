@@ -12,6 +12,7 @@ import '../providers/navigation_provider.dart';
 import '../widgets/app_widgets.dart';
 import '../widgets/drawer_menu_button.dart';
 import '../widgets/game_cards.dart';
+import '../widgets/home_shimmer.dart';
 import 'game_details_navigation.dart';
 
 class HomePage extends ConsumerWidget {
@@ -39,7 +40,7 @@ class HomePage extends ConsumerWidget {
               ),
               const SizedBox(height: 8),
               gamesAsync.when(
-                loading: () => const _LoadingBox(height: 360),
+                loading: () => const HomeShimmer(),
                 error: (e, _) => _ErrorBox(
                   message: 'Failed to load games.',
                   onRetry: () => ref.invalidate(gamesProvider(1)),
@@ -104,7 +105,7 @@ class _HomeContent extends ConsumerWidget {
         const SizedBox(height: 20),
         SectionHeader(title: 'Browse by Genre', onViewAll: () {}),
         genresAsync.when(
-          loading: () => const _LoadingBox(height: 44),
+          loading: () => const GenreRowShimmer(),
           error: (_, _) => const SizedBox.shrink(),
           data: (genres) => _GenreRow(genres: genres),
         ),
@@ -295,20 +296,6 @@ class _SearchField extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _LoadingBox extends StatelessWidget {
-  final double height;
-
-  const _LoadingBox({required this.height});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: height,
-      child: const Center(child: CircularProgressIndicator()),
     );
   }
 }

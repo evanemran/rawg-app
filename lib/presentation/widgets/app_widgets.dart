@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../app/theme/app_colors.dart';
+import 'shimmer_widgets.dart';
 
 /// Extracts the release year (e.g. "2018") from a RAWG date string.
 String? gameYear(String? released) {
@@ -128,13 +129,10 @@ class GameImage extends StatelessWidget {
       fit: fit,
       loadingBuilder: (context, child, progress) {
         if (progress == null) return child;
-        return _placeholder(child: const Center(
-          child: SizedBox(
-            width: 22,
-            height: 22,
-            child: CircularProgressIndicator(strokeWidth: 2),
-          ),
-        ));
+        return ShimmerImagePlaceholder(
+          width: width,
+          height: height,
+        );
       },
       errorBuilder: (context, _, _) => _placeholder(
         child: const Icon(Icons.image_not_supported_outlined,

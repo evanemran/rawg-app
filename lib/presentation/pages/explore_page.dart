@@ -7,6 +7,7 @@ import '../../app/theme/app_colors.dart';
 import '../../domain/models/games.dart';
 import '../providers/games_provider.dart';
 import '../widgets/game_cards.dart';
+import '../widgets/explore_shimmer.dart';
 import 'game_details_navigation.dart';
 
 const _tabs = ['All', 'Games', 'DLC', 'Articles', 'Users'];
@@ -295,7 +296,7 @@ class _ExplorePageState extends ConsumerState<ExplorePage> {
     }
 
     if (_initialLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const ExploreShimmer();
     }
 
     if (_error != null && _items.isEmpty) {
@@ -350,16 +351,7 @@ class _ExplorePageState extends ConsumerState<ExplorePage> {
 
   Widget _buildFooter() {
     if (_loadingMore) {
-      return const Padding(
-        padding: EdgeInsets.symmetric(vertical: 20),
-        child: Center(
-          child: SizedBox(
-            height: 24,
-            width: 24,
-            child: CircularProgressIndicator(strokeWidth: 2),
-          ),
-        ),
-      );
+      return const ExploreLoadMoreShimmer();
     }
     if (!_hasMore) {
       return const Padding(

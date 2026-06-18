@@ -7,6 +7,7 @@ import '../../domain/models/game_single.dart';
 import '../../domain/models/games.dart';
 import '../providers/game_providers.dart';
 import '../widgets/app_widgets.dart';
+import '../widgets/details_shimmer.dart';
 
 class GameDetailsPage extends ConsumerStatefulWidget {
   final Games game;
@@ -268,17 +269,7 @@ class _GameDetailsPageState extends ConsumerState<GameDetailsPage> {
 
   Widget _buildDescription(AsyncValue<GameSingle> detailsAsync) {
     return detailsAsync.when(
-      loading: () => const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        child: Align(
-          alignment: Alignment.centerLeft,
-          child: SizedBox(
-            height: 18,
-            width: 18,
-            child: CircularProgressIndicator(strokeWidth: 2),
-          ),
-        ),
-      ),
+      loading: () => const DescriptionShimmer(),
       error: (_, _) => const SizedBox.shrink(),
       data: (details) {
         final raw = details.description;

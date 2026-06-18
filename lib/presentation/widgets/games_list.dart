@@ -4,6 +4,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rawg_app/domain/models/games.dart';
 import 'package:rawg_app/presentation/providers/games_provider.dart';
+import 'package:rawg_app/presentation/widgets/games_list_shimmer.dart';
 
 class GamesList extends ConsumerWidget{
 
@@ -59,7 +60,7 @@ class GamesList extends ConsumerWidget{
         ],
       ),
     ),
-        loading: () => const Center(child: CircularProgressIndicator()));
+        loading: () => const GamesListShimmer());
   }
 }
 
