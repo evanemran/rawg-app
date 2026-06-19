@@ -14,6 +14,7 @@ import '../widgets/drawer_menu_button.dart';
 import '../widgets/game_cards.dart';
 import '../widgets/home_shimmer.dart';
 import 'game_details_navigation.dart';
+import 'game_list_navigation.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -79,13 +80,19 @@ class _HomeContent extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SectionHeader(title: 'Featured', onViewAll: () {}),
+        SectionHeader(
+          title: 'Featured',
+          onViewAll: () => openGameList(context, title: 'Featured'),
+        ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 0),
           child: _FeaturedCarousel(games: featured),
         ),
         const SizedBox(height: 20),
-        SectionHeader(title: 'Popular Now', onViewAll: () {}),
+        SectionHeader(
+          title: 'Popular Now',
+          onViewAll: () => openGameList(context, title: 'Popular Now'),
+        ),
         SizedBox(
           height: MediaQuery.of(context).size.width * 0.50,
           child: ListView.separated(

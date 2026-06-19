@@ -14,11 +14,11 @@ class _DrawerItem {
 
 const _mainItems = <_DrawerItem>[
   _DrawerItem(Icons.home_filled, 'Home'),
-  _DrawerItem(Icons.search_rounded, 'Explore'),
-  _DrawerItem(Icons.folder_open_rounded, 'Collection'),
-  _DrawerItem(Icons.format_list_bulleted_rounded, 'Lists'),
-  _DrawerItem(Icons.bookmark_border_rounded, 'Wishlist'),
-  _DrawerItem(Icons.schedule_rounded, 'Played'),
+  // _DrawerItem(Icons.search_rounded, 'Explore'),
+  // _DrawerItem(Icons.folder_open_rounded, 'Collection'),
+  // _DrawerItem(Icons.format_list_bulleted_rounded, 'Lists'),
+  // _DrawerItem(Icons.bookmark_border_rounded, 'Wishlist'),
+  // _DrawerItem(Icons.schedule_rounded, 'Played'),
   _DrawerItem(Icons.emoji_events_outlined, 'Achievements'),
   _DrawerItem(Icons.people_alt_outlined, 'Friends'),
   _DrawerItem(Icons.chat_bubble_outline_rounded, 'Messages'),
