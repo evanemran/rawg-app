@@ -1,11 +1,21 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:rawg_app/app/constants/firebase_constants.dart';
 import 'package:rawg_app/app/theme/app_theme.dart';
-import 'package:rawg_app/presentation/pages/app_shell.dart';
+import 'package:rawg_app/firebase_options.dart';
+import 'package:rawg_app/presentation/pages/auth_gate.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(ProviderScope(child: const MyApp()));
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  await GoogleSignIn.instance.initialize(
+    serverClientId: FirebaseConstants.googleWebClientId,
+  );
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -23,7 +33,7 @@ class MyApp extends StatelessWidget {
           child: child!,
         );
       },
-      home: const AppShell(),
+      home: const AuthGate(),
     );
   }
 }

@@ -7,6 +7,7 @@ import '../../domain/models/game_single.dart';
 import '../../domain/models/games.dart';
 import '../providers/game_providers.dart';
 import '../widgets/app_widgets.dart';
+import '../widgets/collection_action_bar.dart';
 import '../widgets/details_shimmer.dart';
 
 class GameDetailsPage extends ConsumerStatefulWidget {
@@ -46,6 +47,8 @@ class _GameDetailsPageState extends ConsumerState<GameDetailsPage> {
               _buildTitleBlock(details),
               const SizedBox(height: 20),
               _buildStats(),
+              const SizedBox(height: 16),
+              CollectionActionBar(game: game),
               const SizedBox(height: 20),
               _buildGenres(),
               _buildDescription(detailsAsync),

@@ -86,7 +86,7 @@ class PosterGameCard extends StatelessWidget {
     super.key,
     required this.game,
     required this.onTap,
-    this.width = 130,
+    this.width = 100,
   });
 
   @override
