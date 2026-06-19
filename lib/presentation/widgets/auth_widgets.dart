@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rawg_app/app/theme/app_images.dart';
 import 'package:rawg_app/app/theme/app_theme.dart';
 
 import '../../app/theme/app_colors.dart';
@@ -159,14 +160,14 @@ class AuthGoogleButton extends StatelessWidget {
           foregroundColor: AppColors.textPrimary,
           side: const BorderSide(color: AppColors.divider),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(24),
           ),
           textStyle: const TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w600,
           ),
         ),
-        icon: const Icon(Icons.g_mobiledata_rounded, size: 28),
+        icon: Image.asset(AppImages.googleIcon, height: 24),
         label: const Text('Continue with Google'),
       ),
     );

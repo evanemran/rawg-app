@@ -10,6 +10,15 @@ class GetGames {
   Future<List<Games>> call(int page) => repository.getGames(page);
 }
 
+class GetGamesByGenre {
+  final RawgRepository repository;
+
+  GetGamesByGenre(this.repository);
+
+  Future<List<Games>> call(String genre, int page) =>
+      repository.getGamesByGenre(genre, page);
+}
+
 class SearchGames {
   final RawgRepository repository;
 

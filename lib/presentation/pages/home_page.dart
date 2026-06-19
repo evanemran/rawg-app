@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rawg_app/app/theme/app_images.dart';
 import 'package:rawg_app/app/theme/app_theme.dart';
 
+import '../../app/constants/game_genre_constants.dart';
 import '../../app/theme/app_colors.dart';
 import '../../domain/models/games.dart';
 import '../../domain/models/genres.dart';
@@ -13,6 +14,7 @@ import '../widgets/app_widgets.dart';
 import '../widgets/drawer_menu_button.dart';
 import '../widgets/game_cards.dart';
 import '../widgets/home_shimmer.dart';
+import '../widgets/shimmer_widgets.dart';
 import 'game_details_navigation.dart';
 import 'game_list_navigation.dart';
 
@@ -30,6 +32,8 @@ class HomePage extends ConsumerWidget {
           onRefresh: () async {
             ref.invalidate(gamesProvider(1));
             ref.invalidate(genresProvider(1));
+            ref.invalidate(gamesByGenreProvider(GameGenreConstants.rpg));
+            ref.invalidate(gamesByGenreProvider(GameGenreConstants.racing));
           },
           child: ListView(
             padding: const EdgeInsets.only(bottom: 24),
@@ -93,21 +97,35 @@ class _HomeContent extends ConsumerWidget {
           title: 'Popular Now',
           onViewAll: () => openGameList(context, title: 'Popular Now'),
         ),
-        SizedBox(
-          height: MediaQuery.of(context).size.width * 0.50,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemCount: popular.length,
-            separatorBuilder: (_, _) => const SizedBox(width: 12),
-            itemBuilder: (context, index) {
-              final game = popular[index];
-              return PosterGameCard(
-                game: game,
-                width: MediaQuery.of(context).size.width * 0.25,
-                onTap: () => openGameDetails(context, game),
-              );
-            },
+        _HorizontalGamesSection(games: popular),
+        const SizedBox(height: 20),
+        _GenreGamesSection(
+          title: 'Popular RPG',
+          genre: GameGenreConstants.rpg,
+          onViewAll: () => openGameList(
+            context,
+            title: 'Popular RPG',
+            genre: GameGenreConstants.rpg,
+          ),
+        ),
+        const SizedBox(height: 20),
+        _GenreGamesSection(
+          title: 'Popular Multiplayer',
+          genre: GameGenreConstants.multiplayer,
+          onViewAll: () => openGameList(
+            context,
+            title: 'Popular Multiplayer',
+            genre: GameGenreConstants.multiplayer,
+          ),
+        ),
+        const SizedBox(height: 20),
+        _GenreGamesSection(
+          title: 'Popular Racing',
+          genre: GameGenreConstants.racing,
+          onViewAll: () => openGameList(
+            context,
+            title: 'Popular Racing',
+            genre: GameGenreConstants.racing,
           ),
         ),
         const SizedBox(height: 20),
@@ -118,6 +136,103 @@ class _HomeContent extends ConsumerWidget {
           data: (genres) => _GenreRow(genres: genres),
         ),
       ],
+    );
+  }
+}
+
+class _HorizontalGamesSection extends StatelessWidget {
+  final List<Games> games;
+
+  const _HorizontalGamesSection({required this.games});
+
+  @override
+  Widget build(BuildContext context) {
+    final cardWidth = MediaQuery.of(context).size.width * 0.25;
+
+    return SizedBox(
+      height: MediaQuery.of(context).size.width * 0.50,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: games.length,
+        separatorBuilder: (_, _) => const SizedBox(width: 12),
+        itemBuilder: (context, index) {
+          final game = games[index];
+          return PosterGameCard(
+            game: game,
+            width: cardWidth,
+            onTap: () => openGameDetails(context, game),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _GenreGamesSection extends ConsumerWidget {
+  final String title;
+  final String genre;
+  final VoidCallback onViewAll;
+
+  const _GenreGamesSection({
+    required this.title,
+    required this.genre,
+    required this.onViewAll,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final gamesAsync = ref.watch(gamesByGenreProvider(genre));
+
+    return gamesAsync.when(
+      loading: () => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SectionHeader(title: title, onViewAll: null),
+          const _GenreGamesRowShimmer(),
+        ],
+      ),
+      error: (_, _) => const SizedBox.shrink(),
+      data: (games) {
+        if (games.isEmpty) return const SizedBox.shrink();
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SectionHeader(title: title, onViewAll: onViewAll),
+            _HorizontalGamesSection(games: games),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _GenreGamesRowShimmer extends StatelessWidget {
+  const _GenreGamesRowShimmer();
+
+  @override
+  Widget build(BuildContext context) {
+    final cardWidth = MediaQuery.of(context).size.width * 0.25;
+    final rowHeight = MediaQuery.of(context).size.width * 0.50;
+
+    return AppShimmer(
+      child: SizedBox(
+        height: rowHeight,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: 4,
+          separatorBuilder: (_, _) => const SizedBox(width: 12),
+          itemBuilder: (_, _) => SizedBox(
+            width: cardWidth,
+            child: const ShimmerBox(
+              borderRadius: BorderRadius.all(Radius.circular(14)),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

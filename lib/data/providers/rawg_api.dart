@@ -64,6 +64,18 @@ class RawgApi {
     return _get(ApiConstants.games, {'page': page, 'page_size': pageSize});
   }
 
+  Future<Map<String, dynamic>> fetchGamesByGenre(
+    String genre,
+    int page, {
+    int? pageSize,
+  }) {
+    return _get(ApiConstants.games, {
+      'genres': genre,
+      'page': page,
+      'page_size': pageSize,
+    });
+  }
+
   Future<Map<String, dynamic>> searchGames(
     String query,
     int page, {

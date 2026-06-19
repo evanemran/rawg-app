@@ -11,4 +11,5 @@ class AppImages {
   static const profileInactive = "$imagePath/profile_inactive.png";
   static const drawerIcon = "$imagePath/drawer_menu.png";
   static const notificationIcon = "$imagePath/notification_icon.png";
+  static const googleIcon = "$imagePath/google_logo.png";
 }

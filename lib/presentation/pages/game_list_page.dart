@@ -13,8 +13,13 @@ const _pageSize = 20;
 
 class GameListPage extends ConsumerStatefulWidget {
   final String title;
+  final String? genre;
 
-  const GameListPage({super.key, required this.title});
+  const GameListPage({
+    super.key,
+    required this.title,
+    this.genre,
+  });
 
   @override
   ConsumerState<GameListPage> createState() => _GameListPageState();
@@ -54,7 +59,9 @@ class _GameListPageState extends ConsumerState<GameListPage> {
     });
 
     try {
-      final batch = await ref.read(getGamesProvider)(1);
+      final batch = widget.genre != null
+          ? await ref.read(getGamesByGenreProvider)(widget.genre!, 1)
+          : await ref.read(getGamesProvider)(1);
       if (!mounted) return;
       setState(() {
         _items.addAll(batch);
@@ -77,7 +84,9 @@ class _GameListPageState extends ConsumerState<GameListPage> {
     setState(() => _loadingMore = true);
 
     try {
-      final batch = await ref.read(getGamesProvider)(nextPage);
+      final batch = widget.genre != null
+          ? await ref.read(getGamesByGenreProvider)(widget.genre!, nextPage)
+          : await ref.read(getGamesProvider)(nextPage);
       if (!mounted) return;
       setState(() {
         _page = nextPage;
