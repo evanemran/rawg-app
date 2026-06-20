@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/theme/app_colors.dart';
 import '../providers/auth_provider.dart';
+import '../widgets/notification_bootstrap.dart';
 import 'app_shell.dart';
 import 'auth_page.dart';
 
@@ -29,7 +30,9 @@ class AuthGate extends ConsumerWidget {
         ),
       ),
       error: (_, _) => const AuthPage(),
-      data: (userId) => userId == null ? const AuthPage() : const AppShell(),
+      data: (userId) => userId == null
+          ? const AuthPage()
+          : NotificationBootstrap(child: const AppShell()),
     );
   }
 }

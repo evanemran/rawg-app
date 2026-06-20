@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:rawg_app/app/theme/app_images.dart';
 import 'package:rawg_app/app/theme/app_theme.dart';
 
 import '../../app/constants/game_genre_constants.dart';
@@ -14,6 +13,7 @@ import '../widgets/app_widgets.dart';
 import '../widgets/drawer_menu_button.dart';
 import '../widgets/game_cards.dart';
 import '../widgets/home_shimmer.dart';
+import '../widgets/notification_badge_icon.dart';
 import '../widgets/shimmer_widgets.dart';
 import 'game_details_navigation.dart';
 import 'game_list_navigation.dart';
@@ -323,11 +323,11 @@ class _FeaturedCarouselState extends State<_FeaturedCarousel> {
   }
 }
 
-class _HomeHeader extends StatelessWidget {
+class _HomeHeader extends ConsumerWidget {
   const _HomeHeader();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(4, 12, 16, 4),
       child: Row(
@@ -376,11 +376,7 @@ class _HomeHeader extends StatelessWidget {
               ],
             ),
           ),
-          IconButton(
-            onPressed: () {},
-            icon: Image.asset(AppImages.notificationIcon,
-                color: AppColors.textPrimary, height: 24,),
-          ),
+          const NotificationBadgeIconButton(),
         ],
       ),
     );
