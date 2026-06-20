@@ -13,12 +13,15 @@ RAWG lets you explore one of the largest open video game databases. The home scr
 - **Home** — Featured carousel, "Popular Now" rail, and browse-by-genre chips.
 - **Explore** — Live, debounced search with **lazy loading / infinite scroll** pagination.
 - **Game details** — Hero artwork, description, stats (Metacritic, rating, playtime), genres, ratings breakdown, platforms, PC system requirements, stores ("where to buy"), screenshots, and tags.
+- **Authentication** — Email/password sign-up and sign-in, plus Google Sign-In via Firebase Auth.
+- **Profile** — User profile backed by Firestore (`name`, `email`, `profilePicture`, `joiningDate`).
+- **Collection** — Save games to a personal library stored in Firestore under each user.
+- **Push notifications (FCM)** — Firebase Cloud Messaging with optional notification images, an in-app notifications list, and an unread badge on the home screen.
 - ** More Coming Soon
 
 ## Screenshots
 
 Here are some screenshots.
-
 <img src = "assets/rawg.png">
 
 ## Tech Stack
@@ -29,7 +32,10 @@ Here are some screenshots.
 | State management   | [Riverpod](https://riverpod.dev) (`flutter_riverpod`)                 |
 | UI design          | **Material 3** with a custom dark theme                               |
 | Networking         | [`http`](https://pub.dev/packages/http)                              |
-| Data source        | [RAWG API](https://rawg.io/apidocs)                                  |                            |
+| Data source        | [RAWG API](https://rawg.io/apidocs)                                  |
+| Authentication     | [Firebase Auth](https://firebase.google.com/docs/auth) + [Google Sign-In](https://pub.dev/packages/google_sign_in) |
+| Backend / storage  | [Cloud Firestore](https://firebase.google.com/docs/firestore)        |
+| Push notifications | [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging) + [`flutter_local_notifications`](https://pub.dev/packages/flutter_local_notifications) |
 
 ## Architecture
 
@@ -41,6 +47,39 @@ The project follows **Clean Architecture**, separating the code into three layer
 
 This keeps the UI decoupled from the network layer: pages depend on use cases, use cases depend on repository abstractions, and only the data layer knows about the actual API.
 
+Firebase is integrated through the same pattern — auth, Firestore, and FCM each have domain repository contracts, data-layer implementations, and Riverpod providers consumed by the presentation layer.
+
+### Firebase
+
+The app uses Firebase for user accounts, persisted user data, and push notifications.
+
+#### Firebase Auth
+
+- Users sign in with **email/password** or **Google Sign-In**.
+- [`AuthGate`](lib/presentation/pages/auth_gate.dart) listens to auth state and routes to the login screen or the main app shell.
+- On sign-up, a user document is created in Firestore.
+
+#### Cloud Firestore
+
+User data is stored under the `users` collection:
+
+| Path | Purpose |
+| ---- | ------- |
+| `users/{userId}` | Profile fields (`name`, `email`, `profilePicture`, `joiningDate`, `fcmToken`) |
+| `users/{userId}/collection/{gameId}` | Saved games in the user's collection |
+| `users/{userId}/notifications/{notificationId}` | Notification history (`title`, `body`, `imageUrl`, `read`, `createdAt`) |
+
+Firestore security rules should restrict each user to their own documents and subcollections (read/write only when `request.auth.uid == userId`).
+
+#### Firebase Cloud Messaging (FCM)
+
+- Device tokens are saved on the user document when the user is signed in.
+- Incoming messages are persisted to Firestore and surfaced in the in-app **Notifications** screen.
+- Foreground notifications are displayed locally with [`flutter_local_notifications`](https://pub.dev/packages/flutter_local_notifications), including **Big Picture** style when a notification image URL is provided.
+- An unread count badge is shown on the home screen notification icon.
+
+Push messages can include an image via the FCM notification payload or a data field (`imageUrl` or `image`). Image URLs must be **HTTPS** and publicly accessible.
+
 ### Data flow
 
 ```
@@ -51,19 +90,22 @@ Widget → Provider → UseCase → Repository (abstract) → RepositoryImpl →
 
 ```
 lib/
-├── main.dart                     # App entry point + ProviderScope
+├── main.dart                     # App entry point + ProviderScope + Firebase init
+├── firebase_options.dart         # Generated Firebase platform config
+├── firebase_messaging_background.dart  # FCM background message handler
 ├── app/
-│   ├── constants/                # API base URL, key, and endpoint paths
+│   ├── constants/                # API base URL, key, endpoint paths, Firebase constants
 │   └── theme/                    # Material 3 dark theme + color palette
 ├── data/
 │   ├── providers/                # RawgApi (HTTP client wrapper)
-│   └── repositories/             # Repository implementations
+│   ├── repositories/             # Repository implementations (RAWG, auth, collection, notifications)
+│   └── services/                 # FCM + local notification services
 ├── domain/
-│   ├── models/                   # Data models (Games, GameSingle, Genre, ...)
+│   ├── models/                   # Data models (Games, GameSingle, AppUser, AppNotification, ...)
 │   ├── repositories/             # Repository abstractions (contracts)
-│   └── usecases/                 # Use cases (GetGames, SearchGames, ...)
+│   └── usecases/                 # Use cases (GetGames, SearchGames, auth, collection, notifications, ...)
 └── presentation/
-    ├── pages/                    # Screens (home, explore, details, drawer, ...)
+    ├── pages/                    # Screens (home, explore, details, auth, profile, notifications, ...)
     ├── providers/                # Riverpod providers
     └── widgets/                  # Reusable UI components
 ```
@@ -82,6 +124,7 @@ State is managed with **Riverpod**. The dependency graph is composed from small,
 
 - [Flutter SDK](https://docs.flutter.dev/get-started/install) (Dart 3.x)
 - A device or emulator/simulator
+- A [Firebase](https://console.firebase.google.com) project with **Authentication**, **Cloud Firestore**, and **Cloud Messaging** enabled
 
 ### Setup
 
@@ -101,7 +144,22 @@ State is managed with **Riverpod**. The dependency graph is composed from small,
    static const String apiKey = "YOUR_RAWG_API_KEY";
    ```
 
-3. Run the app:
+3. Configure Firebase.
+
+   - Create a Firebase project and register Android (and iOS if needed) apps.
+   - Enable **Email/Password** and **Google** sign-in providers under Authentication.
+   - Create a **Cloud Firestore** database.
+   - Add Firestore security rules so users can only access their own data and subcollections (`collection`, `notifications`).
+   - Use the [FlutterFire CLI](https://firebase.flutter.dev/docs/overview) to generate `lib/firebase_options.dart`:
+
+     ```bash
+     dart pub global activate flutterfire_cli
+     flutterfire configure
+     ```
+
+   - Place `google-services.json` (Android) and `GoogleService-Info.plist` (iOS) in the platform folders as required by your Firebase setup.
+
+4. Run the app:
 
    ```bash
    flutter run
