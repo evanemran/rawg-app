@@ -4,6 +4,7 @@ class FirebaseConstants {
 
   static const String usersCollection = 'users';
   static const String collectionSubcollection = 'collection';
+  static const String notificationsSubcollection = 'notifications';
 
   /// Web client ID (OAuth client type 3) used for Google Sign-In on Android.
   static const String googleWebClientId =
