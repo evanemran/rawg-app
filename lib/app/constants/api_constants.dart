@@ -1,7 +1,7 @@
 class ApiConstants {
   static const String baseUrl = "https://api.rawg.io/";
 
-  static const String apiKey = "YOUR_API_KEY";
+  static const String apiKey = "e301cbef711f42fc957b5452ee0c0e99";
 
   // Creators
   static const String creatorRoles = "api/creator-roles";
