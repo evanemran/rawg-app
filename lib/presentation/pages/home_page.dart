@@ -6,6 +6,7 @@ import '../../app/constants/game_genre_constants.dart';
 import '../../app/theme/app_colors.dart';
 import '../../domain/models/games.dart';
 import '../../domain/models/genres.dart';
+import '../providers/drawer_provider.dart';
 import '../providers/games_provider.dart';
 import '../providers/genre_providers.dart';
 import '../providers/navigation_provider.dart';
@@ -129,7 +130,12 @@ class _HomeContent extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 20),
-        SectionHeader(title: 'Browse by Genre', onViewAll: () {}),
+        SectionHeader(
+          title: 'Browse by Genre',
+          onViewAll: () {
+            ref.read(drawerMenuProvider.notifier).state = DrawerMenu.genres;
+          },
+        ),
         genresAsync.when(
           loading: () => const GenreRowShimmer(),
           error: (_, _) => const SizedBox.shrink(),
@@ -253,7 +259,19 @@ class _GenreRow extends StatelessWidget {
         itemCount: genres.length,
         separatorBuilder: (_, _) => const SizedBox(width: 10),
         itemBuilder: (context, index) {
-          return GenreChip(label: genres[index].name ?? '');
+          final genre = genres[index];
+          return GenreChip(
+            label: genre.name ?? '',
+            onTap: () {
+              final slug = genre.slug;
+              if (slug == null || slug.isEmpty) return;
+              openGameList(
+                context,
+                title: genre.name ?? 'Genre',
+                genre: slug,
+              );
+            },
+          );
         },
       ),
     );

@@ -60,8 +60,26 @@ class RawgApi {
   // ---------------------------------------------------------------------------
   // Games
   // ---------------------------------------------------------------------------
-  Future<Map<String, dynamic>> fetchGames(int page, {int? pageSize}) {
-    return _get(ApiConstants.games, {'page': page, 'page_size': pageSize});
+  Future<Map<String, dynamic>> fetchGames(
+    int page, {
+    int? pageSize,
+    String? ordering,
+    String? dates,
+    String? genres,
+    String? platforms,
+    String? publishers,
+    String? search,
+  }) {
+    return _get(ApiConstants.games, {
+      'page': page,
+      'page_size': pageSize,
+      'ordering': ordering,
+      'dates': dates,
+      'genres': genres,
+      'platforms': platforms,
+      'publishers': publishers,
+      'search': search,
+    });
   }
 
   Future<Map<String, dynamic>> fetchGamesByGenre(
@@ -69,11 +87,7 @@ class RawgApi {
     int page, {
     int? pageSize,
   }) {
-    return _get(ApiConstants.games, {
-      'genres': genre,
-      'page': page,
-      'page_size': pageSize,
-    });
+    return fetchGames(page, pageSize: pageSize, genres: genre);
   }
 
   Future<Map<String, dynamic>> searchGames(
@@ -81,11 +95,7 @@ class RawgApi {
     int page, {
     int? pageSize,
   }) {
-    return _get(ApiConstants.games, {
-      'search': query,
-      'page': page,
-      'page_size': pageSize,
-    });
+    return fetchGames(page, pageSize: pageSize, search: query);
   }
 
   Future<Map<String, dynamic>> fetchGameAdditions(String gamePk, int page) {

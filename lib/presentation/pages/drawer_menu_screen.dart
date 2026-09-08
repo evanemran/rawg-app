@@ -2,23 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 
+import '../../app/constants/rawg_discover_filters.dart';
 import '../../app/theme/app_colors.dart';
 import '../providers/auth_provider.dart';
+import '../providers/drawer_provider.dart';
+import 'game_list_page.dart';
 
 class _DrawerItem {
   final IconData icon;
   final String label;
+  final DrawerMenu? menu;
 
-  const _DrawerItem(this.icon, this.label);
+  const _DrawerItem(this.icon, this.label, {this.menu});
 }
 
 const _mainItems = <_DrawerItem>[
-  _DrawerItem(Icons.home_filled, 'Home'),
-  // _DrawerItem(Icons.search_rounded, 'Explore'),
-  // _DrawerItem(Icons.folder_open_rounded, 'Collection'),
-  // _DrawerItem(Icons.format_list_bulleted_rounded, 'Lists'),
-  // _DrawerItem(Icons.bookmark_border_rounded, 'Wishlist'),
-  // _DrawerItem(Icons.schedule_rounded, 'Played'),
+  _DrawerItem(Icons.home_filled, 'Home', menu: DrawerMenu.games),
   _DrawerItem(Icons.emoji_events_outlined, 'Achievements'),
   _DrawerItem(Icons.people_alt_outlined, 'Friends'),
   _DrawerItem(Icons.chat_bubble_outline_rounded, 'Messages'),
@@ -27,44 +26,60 @@ const _mainItems = <_DrawerItem>[
 ];
 
 const _discoverItems = <_DrawerItem>[
-  _DrawerItem(Icons.star_border_rounded, 'Top Rated'),
-  _DrawerItem(Icons.calendar_today_rounded, 'New Releases'),
-  _DrawerItem(Icons.hourglass_empty_rounded, 'Upcoming'),
-  _DrawerItem(Icons.grid_view_rounded, 'Genres'),
-  _DrawerItem(Icons.videogame_asset_rounded, 'Platforms'),
+  _DrawerItem(Icons.star_border_rounded, 'Top Rated', menu: DrawerMenu.topRated),
+  _DrawerItem(
+    Icons.calendar_today_rounded,
+    'New Releases',
+    menu: DrawerMenu.newReleases,
+  ),
+  _DrawerItem(
+    Icons.hourglass_empty_rounded,
+    'Upcoming',
+    menu: DrawerMenu.upcoming,
+  ),
+  _DrawerItem(Icons.grid_view_rounded, 'Genres', menu: DrawerMenu.genres),
+  _DrawerItem(
+    Icons.videogame_asset_rounded,
+    'Platforms',
+    menu: DrawerMenu.platforms,
+  ),
+  _DrawerItem(
+    Icons.business_rounded,
+    'Publishers',
+    menu: DrawerMenu.publishers,
+  ),
 ];
 
-class DrawerMenuScreen extends ConsumerStatefulWidget {
+class DrawerMenuScreen extends ConsumerWidget {
   const DrawerMenuScreen({super.key});
 
-  @override
-  ConsumerState<DrawerMenuScreen> createState() => _DrawerMenuScreenState();
-}
-
-class _DrawerMenuScreenState extends ConsumerState<DrawerMenuScreen> {
-  String _selected = 'Home';
-
-  void _onSelect(String label) {
-    setState(() => _selected = label);
+  void _onSelect(BuildContext context, WidgetRef ref, _DrawerItem item) {
+    if (item.menu != null) {
+      ref.read(drawerMenuProvider.notifier).state = item.menu!;
+    }
     ZoomDrawer.of(context)?.close();
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selected = ref.watch(drawerMenuProvider);
+
     return Material(
       color: AppColors.surface,
       child: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildProfileHeader(),
+            _buildProfileHeader(ref),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ..._mainItems.map(_buildItem),
+                    ..._mainItems.map(
+                      (item) => _buildItem(context, ref, item, selected),
+                    ),
                     const SizedBox(height: 12),
                     const Divider(color: AppColors.divider, height: 1),
                     const Padding(
@@ -79,20 +94,21 @@ class _DrawerMenuScreenState extends ConsumerState<DrawerMenuScreen> {
                         ),
                       ),
                     ),
-                    ..._discoverItems.map(_buildItem),
+                    ..._discoverItems.map(
+                      (item) => _buildItem(context, ref, item, selected),
+                    ),
                     const SizedBox(height: 12),
                   ],
                 ),
               ),
             ),
-            /*_buildPremiumCard(),*/
           ],
         ),
       ),
     );
   }
 
-  Widget _buildProfileHeader() {
+  Widget _buildProfileHeader(WidgetRef ref) {
     final profileAsync = ref.watch(userProfileProvider);
     final displayName = profileAsync.maybeWhen(
       data: (user) => user?.name,
@@ -147,25 +163,28 @@ class _DrawerMenuScreenState extends ConsumerState<DrawerMenuScreen> {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Row(
-                      children: const [
-                        Icon(Icons.shield_outlined,
-                            color: AppColors.textSecondary, size: 14),
+                    const Row(
+                      children: [
+                        Icon(
+                          Icons.shield_outlined,
+                          color: AppColors.textSecondary,
+                          size: 14,
+                        ),
                         SizedBox(width: 4),
-                        Expanded(child: Text(
-                          '3,450 / 5,000 XP',
-                          style: TextStyle(
-                            color: AppColors.textSecondary,
-                            fontSize: 12,
+                        Expanded(
+                          child: Text(
+                            '3,450 / 5,000 XP',
+                            style: TextStyle(
+                              color: AppColors.textSecondary,
+                              fontSize: 12,
+                            ),
                           ),
-                        )),
+                        ),
                       ],
                     ),
                   ],
                 ),
               ),
-              /*const Icon(Icons.chevron_right_rounded,
-                  color: AppColors.textSecondary),*/
             ],
           ),
           const SizedBox(height: 12),
@@ -183,8 +202,13 @@ class _DrawerMenuScreenState extends ConsumerState<DrawerMenuScreen> {
     );
   }
 
-  Widget _buildItem(_DrawerItem item) {
-    final active = item.label == _selected;
+  Widget _buildItem(
+    BuildContext context,
+    WidgetRef ref,
+    _DrawerItem item,
+    DrawerMenu selected,
+  ) {
+    final active = item.menu != null && item.menu == selected;
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
       child: Material(
@@ -194,7 +218,7 @@ class _DrawerMenuScreenState extends ConsumerState<DrawerMenuScreen> {
         borderRadius: BorderRadius.circular(12),
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
-          onTap: () => _onSelect(item.label),
+          onTap: () => _onSelect(context, ref, item),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 13),
             child: Row(
@@ -220,55 +244,35 @@ class _DrawerMenuScreenState extends ConsumerState<DrawerMenuScreen> {
       ),
     );
   }
+}
 
-  Widget _buildPremiumCard() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-      child: Material(
-        color: AppColors.surfaceVariant,
-        borderRadius: BorderRadius.circular(14),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(14),
-          onTap: () => ZoomDrawer.of(context)?.close(),
-          child: Padding(
-            padding: const EdgeInsets.all(14),
-            child: Row(
-              children: [
-                const Icon(Icons.workspace_premium_rounded,
-                    color: AppColors.accent, size: 28),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
-                        'Go Premium',
-                        style: TextStyle(
-                          color: AppColors.textPrimary,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      SizedBox(height: 2),
-                      Text(
-                        'Unlock exclusive features and support the app',
-                        style: TextStyle(
-                          color: AppColors.textSecondary,
-                          fontSize: 11,
-                          height: 1.3,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 8),
-                const Icon(Icons.chevron_right_rounded,
-                    color: AppColors.accent),
-              ],
-            ),
-          ),
-        ),
-      ),
+/// Convenience builders for Discover filtered game lists used by [AppShell].
+class DiscoverGameListPages {
+  DiscoverGameListPages._();
+
+  static Widget topRated() {
+    return const GameListPage(
+      title: 'Top Rated',
+      ordering: RawgDiscoverFilters.topRatedOrdering,
+      showDrawerButton: true,
+    );
+  }
+
+  static Widget newReleases() {
+    return GameListPage(
+      title: 'New Releases',
+      ordering: RawgDiscoverFilters.newReleasesOrdering,
+      dates: RawgDiscoverFilters.newReleasesDates(),
+      showDrawerButton: true,
+    );
+  }
+
+  static Widget upcoming() {
+    return GameListPage(
+      title: 'Upcoming',
+      ordering: RawgDiscoverFilters.upcomingOrdering,
+      dates: RawgDiscoverFilters.upcomingDates(),
+      showDrawerButton: true,
     );
   }
 }

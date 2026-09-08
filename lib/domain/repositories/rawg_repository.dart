@@ -20,7 +20,15 @@ abstract class RawgRepository {
   Future<DeveloperSingle> getDeveloper(String id);
 
   // Games
-  Future<List<Games>> getGames(int page);
+  Future<List<Games>> getGames(
+    int page, {
+    String? ordering,
+    String? dates,
+    String? genres,
+    String? platforms,
+    String? publishers,
+    String? search,
+  });
   Future<List<Games>> getGamesByGenre(String genre, int page);
   Future<List<Games>> searchGames(String query, int page);
   Future<List<Games>> getGameAdditions(String gamePk, int page);
