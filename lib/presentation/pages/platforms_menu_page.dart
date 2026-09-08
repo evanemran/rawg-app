@@ -2,46 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/theme/app_colors.dart';
-import '../../domain/models/games.dart';
-import '../providers/games_provider.dart';
+import '../../domain/models/platforms.dart';
+import '../providers/platform_providers.dart';
+import '../widgets/catalog_list_tile.dart';
 import '../widgets/drawer_menu_button.dart';
 import '../widgets/explore_shimmer.dart';
-import '../widgets/game_cards.dart';
-import 'game_details_navigation.dart';
+import 'game_list_navigation.dart';
 
-/// RAWG returns 20 results per page by default.
 const _pageSize = 20;
 
-class GameListPage extends ConsumerStatefulWidget {
-  final String title;
-  final String? genre;
-  final String? platform;
-  final String? publisher;
-  final String? ordering;
-  final String? dates;
-
-  /// When true (drawer root section), show the hamburger instead of back.
-  final bool showDrawerButton;
-
-  const GameListPage({
-    super.key,
-    required this.title,
-    this.genre,
-    this.platform,
-    this.publisher,
-    this.ordering,
-    this.dates,
-    this.showDrawerButton = false,
-  });
+class PlatformsMenuPage extends ConsumerStatefulWidget {
+  const PlatformsMenuPage({super.key});
 
   @override
-  ConsumerState<GameListPage> createState() => _GameListPageState();
+  ConsumerState<PlatformsMenuPage> createState() => _PlatformsMenuPageState();
 }
 
-class _GameListPageState extends ConsumerState<GameListPage> {
+class _PlatformsMenuPageState extends ConsumerState<PlatformsMenuPage> {
   final ScrollController _scrollController = ScrollController();
-
-  final List<Games> _items = [];
+  final List<PlatformItem> _items = [];
   int _page = 1;
   bool _initialLoading = true;
   bool _loadingMore = false;
@@ -61,17 +40,6 @@ class _GameListPageState extends ConsumerState<GameListPage> {
     super.dispose();
   }
 
-  Future<List<Games>> _fetchPage(int page) {
-    return ref.read(getGamesProvider)(
-      page,
-      ordering: widget.ordering,
-      dates: widget.dates,
-      genres: widget.genre,
-      platforms: widget.platform,
-      publishers: widget.publisher,
-    );
-  }
-
   Future<void> _loadInitial() async {
     setState(() {
       _initialLoading = true;
@@ -83,7 +51,7 @@ class _GameListPageState extends ConsumerState<GameListPage> {
     });
 
     try {
-      final batch = await _fetchPage(1);
+      final batch = await ref.read(getPlatformsProvider)(1);
       if (!mounted) return;
       setState(() {
         _items.addAll(batch);
@@ -101,12 +69,10 @@ class _GameListPageState extends ConsumerState<GameListPage> {
 
   Future<void> _loadMore() async {
     if (_loadingMore || _initialLoading || !_hasMore) return;
-
     final nextPage = _page + 1;
     setState(() => _loadingMore = true);
-
     try {
-      final batch = await _fetchPage(nextPage);
+      final batch = await ref.read(getPlatformsProvider)(nextPage);
       if (!mounted) return;
       setState(() {
         _page = nextPage;
@@ -133,17 +99,15 @@ class _GameListPageState extends ConsumerState<GameListPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        leading: widget.showDrawerButton ? const DrawerMenuButton() : null,
-        title: Text(widget.title),
+        leading: const DrawerMenuButton(),
+        title: const Text('Platforms'),
       ),
       body: _buildBody(),
     );
   }
 
   Widget _buildBody() {
-    if (_initialLoading) {
-      return const ExploreShimmer();
-    }
+    if (_initialLoading) return const ExploreShimmer();
 
     if (_error != null && _items.isEmpty) {
       return Center(
@@ -151,14 +115,11 @@ class _GameListPageState extends ConsumerState<GameListPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             const Text(
-              'Failed to load games.',
+              'Failed to load platforms.',
               style: TextStyle(color: AppColors.textSecondary),
             ),
             const SizedBox(height: 12),
-            TextButton(
-              onPressed: _loadInitial,
-              child: const Text('Retry'),
-            ),
+            TextButton(onPressed: _loadInitial, child: const Text('Retry')),
           ],
         ),
       );
@@ -167,7 +128,7 @@ class _GameListPageState extends ConsumerState<GameListPage> {
     if (_items.isEmpty) {
       return const Center(
         child: Text(
-          'No games found.',
+          'No platforms found.',
           style: TextStyle(color: AppColors.textSecondary),
         ),
       );
@@ -178,51 +139,27 @@ class _GameListPageState extends ConsumerState<GameListPage> {
       child: ListView.builder(
         controller: _scrollController,
         padding: const EdgeInsets.only(bottom: 24),
-        itemCount: _items.length + 2,
+        itemCount: _items.length + (_loadingMore ? 1 : 0),
         itemBuilder: (context, index) {
-          if (index == 0) {
-            return Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-              child: Text(
-                '${_items.length} games',
-                style: const TextStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 17,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            );
+          if (index >= _items.length) {
+            return const ExploreLoadMoreShimmer();
           }
-
-          if (index <= _items.length) {
-            final game = _items[index - 1];
-            return GameSearchTile(
-              game: game,
-              onTap: () => openGameDetails(context, game),
-            );
-          }
-
-          return _buildFooter();
+          final platform = _items[index];
+          final name = platform.name ?? 'Platform';
+          final id = platform.id?.toString();
+          return CatalogListTile(
+            title: name,
+            subtitle: platform.gamesCount != null
+                ? '${platform.gamesCount} games'
+                : null,
+            imageUrl: platform.imageBackground ?? platform.image,
+            onTap: () {
+              if (id == null || id.isEmpty) return;
+              openGameList(context, title: name, platform: id);
+            },
+          );
         },
       ),
     );
-  }
-
-  Widget _buildFooter() {
-    if (_loadingMore) {
-      return const ExploreLoadMoreShimmer();
-    }
-    if (!_hasMore) {
-      return const Padding(
-        padding: EdgeInsets.symmetric(vertical: 20),
-        child: Center(
-          child: Text(
-            'No more games',
-            style: TextStyle(color: AppColors.textTertiary, fontSize: 12),
-          ),
-        ),
-      );
-    }
-    return const SizedBox(height: 24);
   }
 }

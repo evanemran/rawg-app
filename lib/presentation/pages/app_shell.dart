@@ -7,6 +7,7 @@ import '../providers/drawer_provider.dart';
 import 'drawer_menu_screen.dart';
 import 'genres_menu_page.dart';
 import 'landing_page.dart';
+import 'platforms_menu_page.dart';
 import 'publishers_menu_page.dart';
 
 /// Root of the app: hosts the zoom navigation drawer. The selected drawer
@@ -47,8 +48,16 @@ class _MainScreen extends ConsumerWidget {
     switch (menu) {
       case DrawerMenu.games:
         return const LandingPage();
+      case DrawerMenu.topRated:
+        return DiscoverGameListPages.topRated();
+      case DrawerMenu.newReleases:
+        return DiscoverGameListPages.newReleases();
+      case DrawerMenu.upcoming:
+        return DiscoverGameListPages.upcoming();
       case DrawerMenu.genres:
         return const GenresMenuPage();
+      case DrawerMenu.platforms:
+        return const PlatformsMenuPage();
       case DrawerMenu.publishers:
         return const PublishersMenuPage();
     }
